@@ -4,6 +4,7 @@ var player_scene: PackedScene = preload("uid://bvlv7g7jv37sh")
 var enemy_scene: PackedScene = preload("uid://iysf2ptaqiy8")
 
 @onready var multiplayer_spawner: MultiplayerSpawner = $MultiplayerSpawner
+@onready var player_spawn_position: Marker2D = $PayerSpawnPosition
 
 
 func _ready() -> void:
@@ -11,6 +12,7 @@ func _ready() -> void:
         var player := player_scene.instantiate() as Player
         player.name = str(data.peer_id)
         player.input_multiplayer_authority = data.peer_id
+        player.global_position = player_spawn_position.global_position
         return player
 
     peer_ready.rpc_id(1)
