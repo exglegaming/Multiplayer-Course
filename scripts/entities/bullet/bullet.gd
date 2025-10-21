@@ -16,12 +16,12 @@ func _process(delta: float) -> void:
     global_position += direction * SPEED * delta
 
 
-func Start(direction: Vector2) -> void:
+func start(direction: Vector2) -> void:
     self.direction = direction
     rotation = direction.angle()
 
 
-func RegisterCollision() -> void:
+func register_collision() -> void:
     queue_free()
 
 

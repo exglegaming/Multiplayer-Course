@@ -53,7 +53,7 @@ func _on_area_entered(other_area: Area2D) -> void:
 
 	if other_area.owner is Bullet:
 		var bullet := other_area.owner as Bullet
-		bullet.RegisterCollision()
+		bullet.register_collision()
 		handle_hit()
 
 

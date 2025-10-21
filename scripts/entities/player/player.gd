@@ -30,6 +30,6 @@ func try_create_bullet() -> void:
     
     var bullet := bullet_scene.instantiate() as Bullet
     bullet.global_position = weapon_root.global_position
-    bullet.Start(player_input_synchronizer_component.aim_vector)
+    bullet.start(player_input_synchronizer_component.aim_vector)
     get_parent().add_child(bullet, true)
     fire_rate_timer.start()
