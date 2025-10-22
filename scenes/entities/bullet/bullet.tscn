@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://c7aiae8nm0c3v"]
+[gd_scene load_steps=6 format=3 uid="uid://c7aiae8nm0c3v"]
 
 [ext_resource type="Script" uid="uid://bmdfq66xnlewv" path="res://scripts/entities/bullet/bullet.gd" id="1_5x5wm"]
 [ext_resource type="Texture2D" uid="uid://bpmrm55fiiu5p" path="res://assets/bullet/bullet.png" id="1_chn57"]
+[ext_resource type="PackedScene" uid="uid://d3t0tbkljitvk" path="res://scenes/components/hitbox_component.tscn" id="2_ekees"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_5x5wm"]
 properties/0/path = NodePath(".:global_position")
@@ -14,7 +15,7 @@ properties/2/path = NodePath(".:direction")
 properties/2/spawn = true
 properties/2/replication_mode = 0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_5x5wm"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_ekees"]
 
 [node name="Bullet" type="Node2D"]
 script = ExtResource("1_5x5wm")
@@ -27,12 +28,10 @@ autostart = true
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_5x5wm")
 
-[node name="Area2D" type="Area2D" parent="."]
-collision_layer = 256
-collision_mask = 0
+[node name="HitboxComponent" parent="." instance=ExtResource("2_ekees")]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
-shape = SubResource("CircleShape2D_5x5wm")
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="HitboxComponent"]
+shape = SubResource("CircleShape2D_ekees")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("1_chn57")
