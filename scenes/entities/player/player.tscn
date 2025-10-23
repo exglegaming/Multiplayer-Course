@@ -1,14 +1,19 @@
-[gd_scene load_steps=7 format=3 uid="uid://bvlv7g7jv37sh"]
+[gd_scene load_steps=10 format=3 uid="uid://bvlv7g7jv37sh"]
 
 [ext_resource type="Script" uid="uid://bok830xl5fxm5" path="res://scripts/entities/player/player.gd" id="1_1hmtu"]
 [ext_resource type="PackedScene" uid="uid://dq47mgf21fmdy" path="res://scenes/components/player_input_synchronizer_component.tscn" id="2_635qg"]
 [ext_resource type="Texture2D" uid="uid://djqlchaxmur1t" path="res://assets/player/player-medium.png" id="3_58kc7"]
+[ext_resource type="PackedScene" uid="uid://b8iefmglebpj2" path="res://scenes/components/hurtbox_component.tscn" id="4_8akj5"]
 [ext_resource type="Texture2D" uid="uid://db8773ymv5754" path="res://assets/player/rifle.png" id="4_nh4ur"]
+[ext_resource type="PackedScene" uid="uid://drpnxy0o1td60" path="res://scenes/components/health_component.tscn" id="5_bjvvg"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_635qg"]
 properties/0/path = NodePath(".:global_position")
 properties/0/spawn = true
 properties/0/replication_mode = 1
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_8akj5"]
+radius = 5.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_yel1f"]
 
@@ -23,9 +28,20 @@ aim_root = NodePath("../WeaponRoot")
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_635qg")
 
+[node name="HealthComponent" parent="." instance=ExtResource("5_bjvvg")]
+max_health = 5
+
 [node name="FireRateTimer" type="Timer" parent="."]
 wait_time = 0.25
 one_shot = true
+
+[node name="HurtboxComponent" parent="." node_paths=PackedStringArray("health_component") instance=ExtResource("4_8akj5")]
+position = Vector2(0, -11)
+collision_mask = 4
+health_component = NodePath("../HealthComponent")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtboxComponent"]
+shape = SubResource("CircleShape2D_8akj5")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("3_58kc7")

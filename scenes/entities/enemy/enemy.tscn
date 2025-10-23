@@ -1,14 +1,18 @@
-[gd_scene load_steps=8 format=3 uid="uid://iysf2ptaqiy8"]
+[gd_scene load_steps=10 format=3 uid="uid://iysf2ptaqiy8"]
 
 [ext_resource type="Script" uid="uid://d3o8hyvqdaexs" path="res://scripts/entities/enemy/enemy.gd" id="1_e58rf"]
 [ext_resource type="Texture2D" uid="uid://bug5bbrsnns8" path="res://assets/enemy/enemy_medium.png" id="1_j1w5s"]
 [ext_resource type="PackedScene" uid="uid://drpnxy0o1td60" path="res://scenes/components/health_component.tscn" id="2_6fawb"]
 [ext_resource type="PackedScene" uid="uid://b8iefmglebpj2" path="res://scenes/components/hurtbox_component.tscn" id="3_in88q"]
+[ext_resource type="PackedScene" uid="uid://d3t0tbkljitvk" path="res://scenes/components/hitbox_component.tscn" id="5_dxsuy"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_e58rf"]
 properties/0/path = NodePath(".:global_position")
 properties/0/spawn = true
 properties/0/replication_mode = 1
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dxsuy"]
+size = Vector2(10, 14)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_in88q"]
 size = Vector2(16, 24)
@@ -30,6 +34,13 @@ autostart = true
 
 [node name="HealthComponent" parent="." instance=ExtResource("2_6fawb")]
 max_health = 2
+
+[node name="HitboxComponent" parent="." instance=ExtResource("5_dxsuy")]
+position = Vector2(0, -10)
+collision_layer = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HitboxComponent"]
+shape = SubResource("RectangleShape2D_dxsuy")
 
 [node name="HurtboxComponent" parent="." node_paths=PackedStringArray("health_component") instance=ExtResource("3_in88q")]
 position = Vector2(0, -12)
