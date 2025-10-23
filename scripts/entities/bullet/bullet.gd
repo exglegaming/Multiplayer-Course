@@ -18,9 +18,9 @@ func _process(delta: float) -> void:
     global_position += direction * SPEED * delta
 
 
-func start(direction: Vector2) -> void:
-    self.direction = direction
-    rotation = direction.angle()
+func start(dir: Vector2) -> void:
+    direction = dir
+    rotation = dir.angle()
 
 
 func register_collision() -> void:
@@ -32,5 +32,5 @@ func _on_life_timer_timeout() -> void:
         queue_free()
 
 
-func _on_hit_hurtbox(hurtbox_component: HurtboxComponent) -> void:
+func _on_hit_hurtbox(_hurtbox_component: HurtboxComponent) -> void:
     register_collision()

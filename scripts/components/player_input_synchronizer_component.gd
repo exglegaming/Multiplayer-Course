@@ -8,7 +8,7 @@ var aim_vector: Vector2 = Vector2.RIGHT
 var is_attack_pressed: bool
 
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
   if is_multiplayer_authority():
     gather_input()
 

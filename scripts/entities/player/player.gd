@@ -15,7 +15,7 @@ func _ready() -> void:
     health_component.died.connect(_on_died)
 
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
     var aim_position: Vector2 =  weapon_root.global_position + player_input_synchronizer_component.aim_vector
     weapon_root.look_at(aim_position)
 
