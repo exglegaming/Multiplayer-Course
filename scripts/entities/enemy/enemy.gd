@@ -1,6 +1,9 @@
 extends CharacterBody2D
 
 
+const PLAYER: StringName = "player"
+
+
 var target_position: Vector2
 
 @onready var target_acquisistion_timer: Timer = $TargetAcquisitionTimer
@@ -22,7 +25,7 @@ func _process(_delta: float) -> void:
 
 
 func acquire_target() -> void:
-  var players := get_tree().get_nodes_in_group("player")
+  var players := get_tree().get_nodes_in_group(PLAYER)
   var nearest_player: Player = null
   var nearest_squared_distance: float
 
