@@ -45,6 +45,11 @@ func try_fire() -> void:
     get_parent().add_child(bullet, true)
     fire_rate_timer.start()
 
+    play_fire_effects.rpc()
+
+
+@rpc("authority", "call_local", "unreliable")
+func play_fire_effects() -> void:
     if animation_player.is_playing():
         animation_player.stop()
     animation_player.play(FIRE)
