@@ -1,6 +1,9 @@
 class_name Player
 extends CharacterBody2D
 
+
+const FIRE: StringName = "fire"
+
 var input_multiplayer_authority: int
 var bullet_scene: PackedScene = preload("uid://c7aiae8nm0c3v")
 
@@ -9,6 +12,7 @@ var bullet_scene: PackedScene = preload("uid://c7aiae8nm0c3v")
 @onready var fire_rate_timer: Timer = $FireRateTimer
 @onready var health_component: HealthComponent = $HealthComponent
 @onready var visuals: Node2D = $Visuals
+@onready var animation_player: AnimationPlayer = $AnimationPlayer
 
 func _ready() -> void:
     player_input_synchronizer_component.set_multiplayer_authority(input_multiplayer_authority)
@@ -21,7 +25,7 @@ func _process(_delta: float) -> void:
         velocity = player_input_synchronizer_component.movement_vector * 100
         move_and_slide()
         if player_input_synchronizer_component.is_attack_pressed:
-            try_create_bullet()
+            try_fire()
 
 
 func update_aim_position() -> void:
@@ -31,15 +35,19 @@ func update_aim_position() -> void:
     weapon_root.look_at(aim_position)
 
 
-func try_create_bullet() -> void:
+func try_fire() -> void:
     if !fire_rate_timer.is_stopped():
         return
-    
+
     var bullet := bullet_scene.instantiate() as Bullet
     bullet.global_position = weapon_root.global_position
     bullet.start(player_input_synchronizer_component.aim_vector)
     get_parent().add_child(bullet, true)
     fire_rate_timer.start()
+
+    if animation_player.is_playing():
+        animation_player.stop()
+    animation_player.play(FIRE)
 
 
 func _on_died() -> void:
