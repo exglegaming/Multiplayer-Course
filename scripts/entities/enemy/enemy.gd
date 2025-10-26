@@ -12,7 +12,7 @@ var target_position: Vector2
 
 func _ready() -> void:
   target_acquisistion_timer.timeout.connect(_on_target_aqcuisition_timer_timeout)
-  
+
   if is_multiplayer_authority():
     health_component.died.connect(_on_died)
     acquire_target()
@@ -34,12 +34,12 @@ func acquire_target() -> void:
       nearest_player = player
       nearest_squared_distance = nearest_player.global_position.distance_squared_to(global_position)
       continue
-    
+
     var player_sqaured_distance: float = player.global_position.distance_squared_to(global_position)
     if player_sqaured_distance < nearest_squared_distance:
       nearest_squared_distance = player_sqaured_distance
       nearest_player = player
-  
+
   if nearest_player != null:
     target_position = nearest_player.global_position
 
