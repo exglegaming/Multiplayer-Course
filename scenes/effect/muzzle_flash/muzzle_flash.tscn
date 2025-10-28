@@ -1,0 +1,54 @@
+[gd_scene load_steps=8 format=3 uid="uid://dw382p5mwq3kl"]
+
+[ext_resource type="Texture2D" uid="uid://d1dsmhob2lub4" path="res://assets/effect/particles.png" id="1_hcqs8"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_hcqs8"]
+particles_animation = true
+particles_anim_h_frames = 4
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="Gradient" id="Gradient_hcqs8"]
+interpolation_mode = 1
+offsets = PackedFloat32Array(0, 0.33333334, 0.6666667)
+colors = PackedColorArray(0.9529412, 0.76862746, 0.10980392, 1, 0.9764706, 0.5254902, 0.09019608, 1, 1, 1, 1, 1)
+metadata/_snap_count = 3
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_swl84"]
+gradient = SubResource("Gradient_hcqs8")
+
+[sub_resource type="Curve" id="Curve_hcqs8"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.06849315, 1), 0.0, 0.0, 0, 0, Vector2(0.49706456, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_swl84"]
+curve = SubResource("Curve_hcqs8")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_p8wl2"]
+particle_flag_disable_z = true
+angle_min = -720.0
+angle_max = 720.0
+spread = 10.0
+initial_velocity_min = 150.0
+initial_velocity_max = 300.0
+angular_velocity_min = -720.0
+angular_velocity_max = 719.99994
+gravity = Vector3(0, 0, 0)
+damping_min = 900.00006
+damping_max = 900.00006
+scale_min = 0.5
+scale_curve = SubResource("CurveTexture_swl84")
+color_initial_ramp = SubResource("GradientTexture1D_swl84")
+anim_offset_max = 1.0
+
+[node name="MuzzleFlash" type="GPUParticles2D"]
+material = SubResource("CanvasItemMaterial_hcqs8")
+emitting = false
+amount = 5
+texture = ExtResource("1_hcqs8")
+lifetime = 0.2
+one_shot = true
+explosiveness = 0.9
+fixed_fps = 0
+interpolate = false
+process_material = SubResource("ParticleProcessMaterial_p8wl2")
