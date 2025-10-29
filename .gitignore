@@ -21,3 +21,4 @@ mono_crash.*.json
 Downloads/
 Builds/
 .DS_Store
+.Zed
