@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://25v5neekcjpn"]
+[gd_scene load_steps=7 format=3 uid="uid://25v5neekcjpn"]
 
 [ext_resource type="Script" uid="uid://dcxxgns8fnshc" path="res://scripts/levels/main.gd" id="1_72ix8"]
 [ext_resource type="Texture2D" uid="uid://cwdw6krv0ouug" path="res://assets/environment/arena.png" id="2_2vj2h"]
 [ext_resource type="PackedScene" uid="uid://dwwkl7bso0srk" path="res://scenes/manager/enemy_manager.tscn" id="2_y0acb"]
+[ext_resource type="PackedScene" uid="uid://by55842vg2bcw" path="res://scenes/ui/game_ui/game_ui.tscn" id="3_j4d2a"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_2vj2h"]
 size = Vector2(32, 300)
@@ -20,6 +21,9 @@ spawn_rect = NodePath("../SpawnRect")
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
 _spawnable_scenes = PackedStringArray("uid://c7aiae8nm0c3v", "uid://iysf2ptaqiy8")
 spawn_path = NodePath("../YSortRoot")
+
+[node name="GameUI" parent="." node_paths=PackedStringArray("enemy_manager") instance=ExtResource("3_j4d2a")]
+enemy_manager = NodePath("../EnemyManager")
 
 [node name="PayerSpawnPosition" type="Marker2D" parent="."]
 position = Vector2(320, 185)

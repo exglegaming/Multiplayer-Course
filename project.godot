@@ -41,6 +41,10 @@ folder_colors={
 "res://scripts/": "orange"
 }
 
+[gui]
+
+theme/custom="uid://ds6pn2y3vhec4"
+
 [input]
 
 move_left={
