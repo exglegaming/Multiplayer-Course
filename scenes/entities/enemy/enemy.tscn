@@ -10,18 +10,22 @@
 properties/0/path = NodePath(".:global_position")
 properties/0/spawn = true
 properties/0/replication_mode = 1
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_dxsuy"]
-size = Vector2(10, 14)
+properties/1/path = NodePath(".:target_position")
+properties/1/spawn = true
+properties/1/replication_mode = 2
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_in88q"]
 size = Vector2(16, 24)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_j1w5s"]
-radius = 4.0
+radius = 5.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dxsuy"]
+size = Vector2(10, 14)
 
 [node name="Enemy" type="CharacterBody2D"]
-collision_layer = 0
+collision_layer = 4
+collision_mask = 5
 motion_mode = 1
 script = ExtResource("1_e58rf")
 
@@ -35,13 +39,6 @@ autostart = true
 [node name="HealthComponent" parent="." instance=ExtResource("2_6fawb")]
 max_health = 2
 
-[node name="HitboxComponent" parent="." instance=ExtResource("5_dxsuy")]
-position = Vector2(0, -10)
-collision_layer = 4
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="HitboxComponent"]
-shape = SubResource("RectangleShape2D_dxsuy")
-
 [node name="HurtboxComponent" parent="." node_paths=PackedStringArray("health_component") instance=ExtResource("3_in88q")]
 position = Vector2(0, -12)
 health_component = NodePath("../HealthComponent")
@@ -49,11 +46,20 @@ health_component = NodePath("../HealthComponent")
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="HurtboxComponent"]
 shape = SubResource("RectangleShape2D_in88q")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Visuals" type="Node2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="Visuals"]
 texture = ExtResource("1_j1w5s")
 centered = false
 offset = Vector2(-8, -23)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, -4)
+position = Vector2(0, -5)
 shape = SubResource("CircleShape2D_j1w5s")
+
+[node name="HitboxComponent" parent="." instance=ExtResource("5_dxsuy")]
+position = Vector2(0, -10)
+collision_layer = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HitboxComponent"]
+shape = SubResource("RectangleShape2D_dxsuy")

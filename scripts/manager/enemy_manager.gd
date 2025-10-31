@@ -54,7 +54,10 @@ func sychronize(to_peer_id: int = -1) -> void:
 
 @rpc("authority", "call_remote", "reliable")
 func _sychronize(data: Dictionary) -> void:
-	round_timer.wait_time = data["round_timer_time_left"]
+	var wait_time: float = data["round_timer_time_left"]
+	if wait_time > 0:
+		round_timer.wait_time = wait_time
+	
 	if data["round_timer_is_running"]:
 		round_timer.start()
 	round_count = data["round_count"]
