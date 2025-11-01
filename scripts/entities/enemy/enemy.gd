@@ -7,6 +7,7 @@ var target_position: Vector2
 var state_machine: CallableStateMachine = CallableStateMachine.new()
 var default_collision_mask: int
 var default_collision_layer: int
+var alert_tween: Tween
 
 @onready var target_acquisistion_timer: Timer = $TargetAcquisitionTimer
 @onready var health_component: HealthComponent = $HealthComponent
@@ -14,18 +15,20 @@ var default_collision_layer: int
 @onready var attack_cooldown_timer: Timer = $AttackCooldownTimer
 @onready var charge_attack_timer: Timer = $ChargeAttackTimer
 @onready var hitbox_collision_shape: CollisionShape2D = %HitboxCollisionShape
+@onready var alert_sprite: Sprite2D = $AlertSprite
 
 
 func _ready() -> void:
 	state_machine.add_states(state_spawn, enter_state_spawn, Callable())
 	state_machine.add_states(state_normal, enter_state_normal, Callable())
-	state_machine.add_states(state_charge_attack, enter_state_charge_attack, Callable())
+	state_machine.add_states(state_charge_attack, enter_state_charge_attack, leave_state_charge_attack)
 	state_machine.add_states(state_attack, enter_state_attack, leave_state_attack)
 	state_machine.set_initial_state(state_spawn)
 
 	default_collision_layer = collision_layer
 	default_collision_mask = collision_mask
 	hitbox_collision_shape.disabled = true
+	alert_sprite.scale = Vector2.ZERO
 
 	if is_multiplayer_authority():
 		health_component.died.connect(_on_died)
@@ -74,8 +77,17 @@ func state_normal() -> void:
 
 
 func enter_state_charge_attack() -> void:
-	acquire_target()
-	charge_attack_timer.start()
+	if is_multiplayer_authority():
+		acquire_target()
+		charge_attack_timer.start()
+
+	if alert_tween != null &&  alert_tween.is_valid():
+		alert_tween.kill()
+	
+	alert_tween = create_tween()
+	alert_tween.tween_property(alert_sprite, "scale", Vector2.ONE, .2)\
+		.set_ease(Tween.EASE_OUT)\
+		.set_trans(Tween.TransitionType.TRANS_BACK)
 
 
 func state_charge_attack() -> void:
@@ -83,6 +95,16 @@ func state_charge_attack() -> void:
 		velocity = velocity.lerp(Vector2.ZERO, 1.0 - exp(-15 * get_process_delta_time()))
 		if charge_attack_timer.is_stopped():
 			state_machine.change_state(state_attack)
+
+
+func leave_state_charge_attack() -> void:
+	if alert_tween != null &&  alert_tween.is_valid():
+		alert_tween.kill()
+
+	alert_tween = create_tween()
+	alert_tween.tween_property(alert_sprite, "scale", Vector2.ZERO, .2)\
+		.set_ease(Tween.EASE_IN)\
+		.set_trans(Tween.TransitionType.TRANS_BACK)
 
 
 func enter_state_attack() -> void:
