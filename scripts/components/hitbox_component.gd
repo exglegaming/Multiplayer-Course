@@ -9,4 +9,4 @@ var damage: int = 1
 
 
 func register_hurtbox_hit(hurtbox_component: HurtboxComponent) -> void:
-    hit_hurtbox.emit(hurtbox_component)
+	hit_hurtbox.emit(hurtbox_component)

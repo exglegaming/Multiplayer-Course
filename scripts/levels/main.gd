@@ -8,18 +8,18 @@ var player_scene: PackedScene = preload("uid://bvlv7g7jv37sh")
 
 
 func _ready() -> void:
-    multiplayer_spawner.spawn_function = func(data: Variant) -> Variant:
-        var player := player_scene.instantiate() as Player
-        player.name = str(data.peer_id)
-        player.input_multiplayer_authority = data.peer_id
-        player.global_position = player_spawn_position.global_position
-        return player
+	multiplayer_spawner.spawn_function = func(data: Variant) -> Variant:
+		var player := player_scene.instantiate() as Player
+		player.name = str(data.peer_id)
+		player.input_multiplayer_authority = data.peer_id
+		player.global_position = player_spawn_position.global_position
+		return player
 
-    peer_ready.rpc_id(1)
+	peer_ready.rpc_id(1)
 
 
 @rpc("any_peer", "call_local", "reliable")
 func peer_ready() -> void:
-    var sender_id := multiplayer.get_remote_sender_id()
-    multiplayer_spawner.spawn({"peer_id": sender_id})
-    enemy_manager.sychronize(sender_id)
+	var sender_id := multiplayer.get_remote_sender_id()
+	multiplayer_spawner.spawn({"peer_id": sender_id})
+	enemy_manager.sychronize(sender_id)
