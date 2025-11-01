@@ -5,18 +5,27 @@ const PLAYER: StringName = "player"
 
 var target_position: Vector2
 var state_machine: CallableStateMachine = CallableStateMachine.new()
+var default_collision_mask: int
+var default_collision_layer: int
 
 @onready var target_acquisistion_timer: Timer = $TargetAcquisitionTimer
 @onready var health_component: HealthComponent = $HealthComponent
 @onready var visuals: Node2D = $Visuals
+@onready var attack_cooldown_timer: Timer = $AttackCooldownTimer
+@onready var charge_attack_timer: Timer = $ChargeAttackTimer
+@onready var hitbox_collision_shape: CollisionShape2D = %HitboxCollisionShape
 
 
 func _ready() -> void:
 	state_machine.add_states(state_spawn, enter_state_spawn, Callable())
 	state_machine.add_states(state_normal, enter_state_normal, Callable())
+	state_machine.add_states(state_charge_attack, enter_state_charge_attack, Callable())
+	state_machine.add_states(state_attack, enter_state_attack, leave_state_attack)
 	state_machine.set_initial_state(state_spawn)
-	
-	target_acquisistion_timer.timeout.connect(_on_target_aqcuisition_timer_timeout)
+
+	default_collision_layer = collision_layer
+	default_collision_mask = collision_mask
+	hitbox_collision_shape.disabled = true
 
 	if is_multiplayer_authority():
 		health_component.died.connect(_on_died)
@@ -28,6 +37,7 @@ func _process(_delta: float) -> void:
 		move_and_slide()
 
 
+#region State_Machine_States
 func enter_state_spawn() -> void:
 	var tween: Tween = create_tween()
 	tween.tween_property(visuals, "scale", Vector2.ONE, .4)\
@@ -46,12 +56,59 @@ func state_spawn() -> void:
 func enter_state_normal() -> void:
 	if is_multiplayer_authority():
 		acquire_target()
+		target_acquisistion_timer.start()
 
 
 func state_normal() -> void:
 	if is_multiplayer_authority():
 		velocity = global_position.direction_to(target_position) * 40
+		
+		if target_acquisistion_timer.is_stopped():
+			acquire_target()
+			target_acquisistion_timer.start()
+
+		if attack_cooldown_timer.is_stopped() && global_position.distance_to(target_position) < 150:
+			state_machine.change_state(state_charge_attack)
+
 	flip()
+
+
+func enter_state_charge_attack() -> void:
+	acquire_target()
+	charge_attack_timer.start()
+
+
+func state_charge_attack() -> void:
+	if is_multiplayer_authority():
+		velocity = velocity.lerp(Vector2.ZERO, 1.0 - exp(-15 * get_process_delta_time()))
+		if charge_attack_timer.is_stopped():
+			state_machine.change_state(state_attack)
+
+
+func enter_state_attack() -> void:
+	if is_multiplayer_authority():
+		collision_mask = 1 << 0
+		collision_layer = 0
+		hitbox_collision_shape.disabled = false
+		velocity = global_position.direction_to(target_position) * 400
+
+
+func state_attack() -> void:
+	if is_multiplayer_authority():
+		velocity = velocity.lerp(Vector2.ZERO, 1.0 - exp(-3 * get_process_delta_time()))
+		if velocity.length() < 25:
+			state_machine.change_state(state_normal)
+
+
+func leave_state_attack() -> void:
+	if is_multiplayer_authority():
+		collision_mask = default_collision_mask
+		collision_layer = default_collision_layer
+		hitbox_collision_shape.disabled = true
+		attack_cooldown_timer.start()
+
+
+#endregion
 
 
 func flip() -> void:
@@ -76,11 +133,6 @@ func acquire_target() -> void:
 
 	if nearest_player != null:
 		target_position = nearest_player.global_position
-
-
-func _on_target_aqcuisition_timer_timeout() -> void:
-	if is_multiplayer_authority():
-		acquire_target()
 
 
 func _on_died() -> void:
