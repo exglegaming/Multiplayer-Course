@@ -8,6 +8,11 @@ var state_machine: CallableStateMachine = CallableStateMachine.new()
 var default_collision_mask: int
 var default_collision_layer: int
 var alert_tween: Tween
+var current_state: String:
+	get:
+		return state_machine.current_state
+	set(value):
+		state_machine.change_state(Callable.create(self, value))
 
 @onready var target_acquisistion_timer: Timer = $TargetAcquisitionTimer
 @onready var health_component: HealthComponent = $HealthComponent
@@ -18,13 +23,15 @@ var alert_tween: Tween
 @onready var alert_sprite: Sprite2D = $AlertSprite
 
 
-func _ready() -> void:
-	state_machine.add_states(state_spawn, enter_state_spawn, Callable())
-	state_machine.add_states(state_normal, enter_state_normal, Callable())
-	state_machine.add_states(state_charge_attack, enter_state_charge_attack, leave_state_charge_attack)
-	state_machine.add_states(state_attack, enter_state_attack, leave_state_attack)
-	state_machine.set_initial_state(state_spawn)
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_SCENE_INSTANTIATED:
+		state_machine.add_states(state_spawn, enter_state_spawn, Callable())
+		state_machine.add_states(state_normal, enter_state_normal, Callable())
+		state_machine.add_states(state_charge_attack, enter_state_charge_attack, leave_state_charge_attack)
+		state_machine.add_states(state_attack, enter_state_attack, leave_state_attack)
+	
 
+func _ready() -> void:
 	default_collision_layer = collision_layer
 	default_collision_mask = collision_mask
 	hitbox_collision_shape.disabled = true
@@ -32,6 +39,7 @@ func _ready() -> void:
 
 	if is_multiplayer_authority():
 		health_component.died.connect(_on_died)
+		state_machine.set_initial_state(state_spawn)
 
 
 func _process(_delta: float) -> void:
@@ -47,7 +55,7 @@ func enter_state_spawn() -> void:
 		.from(Vector2.ZERO)\
 		.set_ease(Tween.EASE_OUT)\
 		.set_trans(Tween.TRANS_BACK)
-	
+
 	await tween.finished
 	state_machine.change_state(state_normal)
 
@@ -65,7 +73,7 @@ func enter_state_normal() -> void:
 func state_normal() -> void:
 	if is_multiplayer_authority():
 		velocity = global_position.direction_to(target_position) * 40
-		
+
 		if target_acquisistion_timer.is_stopped():
 			acquire_target()
 			target_acquisistion_timer.start()
@@ -83,7 +91,7 @@ func enter_state_charge_attack() -> void:
 
 	if alert_tween != null &&  alert_tween.is_valid():
 		alert_tween.kill()
-	
+  
 	alert_tween = create_tween()
 	alert_tween.tween_property(alert_sprite, "scale", Vector2.ONE, .2)\
 		.set_ease(Tween.EASE_OUT)\
@@ -95,6 +103,7 @@ func state_charge_attack() -> void:
 		velocity = velocity.lerp(Vector2.ZERO, 1.0 - exp(-15 * get_process_delta_time()))
 		if charge_attack_timer.is_stopped():
 			state_machine.change_state(state_attack)
+	flip()
 
 
 func leave_state_charge_attack() -> void:
