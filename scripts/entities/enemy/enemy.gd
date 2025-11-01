@@ -91,7 +91,7 @@ func enter_state_charge_attack() -> void:
 
 	if alert_tween != null &&  alert_tween.is_valid():
 		alert_tween.kill()
-  
+	
 	alert_tween = create_tween()
 	alert_tween.tween_property(alert_sprite, "scale", Vector2.ONE, .2)\
 		.set_ease(Tween.EASE_OUT)\
