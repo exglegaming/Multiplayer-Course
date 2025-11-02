@@ -71,15 +71,23 @@ func play_fire_effects() -> void:
 	get_parent().add_child(muzzle_flash)
 
 
-@rpc("authority", "call_local", "reliable")
 func kill() -> void:
+	if !is_multiplayer_authority():
+		push_error("Cannot call kill on non-server client")
+		return
+	
+	_kill.rpc()
+	await get_tree().create_timer(.5).timeout
+
+	died.emit()
+	queue_free()
+
+
+@rpc("authority", "call_local", "reliable")
+func _kill() -> void:
 	is_dying = true
 	player_input_synchronizer_component.public_visibility = false
 
 
 func _on_died() -> void:
-	kill.rpc()
-	await get_tree().create_timer(.5).timeout
-
-	died.emit()
-	queue_free()
+	kill()
