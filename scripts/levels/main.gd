@@ -34,8 +34,6 @@ func peer_ready() -> void:
 	multiplayer_spawner.spawn({"peer_id": sender_id})
 	enemy_manager.sychronize(sender_id)
 
-	print(multiplayer.get_unique_id())
-
 
 func respawn_dead_peers() -> void:
 	for peer_id in dead_peers:

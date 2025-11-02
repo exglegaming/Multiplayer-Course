@@ -9,6 +9,7 @@ const FIRE: StringName = "fire"
 var input_multiplayer_authority: int
 var bullet_scene: PackedScene = preload("uid://c7aiae8nm0c3v")
 var muzzle_flash_scene: PackedScene = preload("uid://dw382p5mwq3kl")
+var is_dying: bool
 
 @onready var player_input_synchronizer_component: PlayerInputSynchronizerComponent = $PlayerInputSynchronizerComponent
 @onready var weapon_root: Node2D = $Visuals/WeaponRoot
@@ -28,6 +29,10 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	update_aim_position()
 	if is_multiplayer_authority():
+		if is_dying:
+			global_position = Vector2.RIGHT * 1000
+			return
+		
 		velocity = player_input_synchronizer_component.movement_vector * 100
 		move_and_slide()
 		if player_input_synchronizer_component.is_attack_pressed:
@@ -66,6 +71,15 @@ func play_fire_effects() -> void:
 	get_parent().add_child(muzzle_flash)
 
 
+@rpc("authority", "call_local", "reliable")
+func kill() -> void:
+	is_dying = true
+	player_input_synchronizer_component.public_visibility = false
+
+
 func _on_died() -> void:
+	kill.rpc()
+	await get_tree().create_timer(.5).timeout
+
 	died.emit()
 	queue_free()
