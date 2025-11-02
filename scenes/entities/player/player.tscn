@@ -96,7 +96,6 @@ aim_root = NodePath("../Visuals/WeaponRoot")
 replication_config = SubResource("SceneReplicationConfig_635qg")
 
 [node name="HealthComponent" parent="." instance=ExtResource("5_bjvvg")]
-max_health = 5
 
 [node name="FireRateTimer" type="Timer" parent="."]
 wait_time = 0.25
