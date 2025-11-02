@@ -2,6 +2,8 @@ class_name Player
 extends CharacterBody2D
 
 
+signal died
+
 const FIRE: StringName = "fire"
 
 var input_multiplayer_authority: int
@@ -18,7 +20,9 @@ var muzzle_flash_scene: PackedScene = preload("uid://dw382p5mwq3kl")
 
 func _ready() -> void:
 	player_input_synchronizer_component.set_multiplayer_authority(input_multiplayer_authority)
-	health_component.died.connect(_on_died)
+
+	if is_multiplayer_authority():
+		health_component.died.connect(_on_died)
 
 
 func _process(_delta: float) -> void:
@@ -63,4 +67,5 @@ func play_fire_effects() -> void:
 
 
 func _on_died() -> void:
-	print("player died")
+	died.emit()
+	queue_free()
