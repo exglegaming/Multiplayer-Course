@@ -3,12 +3,13 @@ extends CharacterBody2D
 
 const PLAYER: StringName = "player"
 
+var impact_particles_scene: PackedScene = preload("uid://dg86u558utw8f")
+var ground_particles_scene: PackedScene = preload("uid://jg07db1vyyw3")
 var target_position: Vector2
 var state_machine: CallableStateMachine = CallableStateMachine.new()
 var default_collision_mask: int
 var default_collision_layer: int
 var alert_tween: Tween
-var impact_particles_scene: PackedScene = preload("uid://dg86u558utw8f")
 var current_state: String:
 	get:
 		return state_machine.current_state
@@ -176,7 +177,20 @@ func spawn_hit_particles() -> void:
 	get_parent().add_child(hit_particles)
 
 
+@rpc("authority", "call_local")
+func spawn_death_particles() -> void:
+	var death_particles: Node2D = ground_particles_scene.instantiate()
+
+	var background_node: Node = Main.background_mask
+	if !is_instance_valid(background_node):
+		background_node = get_parent()
+
+	background_node.add_child(death_particles)
+	death_particles.global_position = global_position
+
+
 func _on_died() -> void:
+	spawn_death_particles.rpc()
 	GameEvents.emit_enemy_died()
 	queue_free()
 
