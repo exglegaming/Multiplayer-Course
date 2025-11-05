@@ -5,10 +5,12 @@ const PORT: int = 3000
 
 var main_scene: PackedScene = preload("uid://25v5neekcjpn")
 
-
-@onready var host_button: Button = $HBoxContainer/HostButton
-@onready var join_button: Button = $HBoxContainer/JoinButton
-@onready var back_button: Button = $BackButton
+@onready var display_name_text_edit: TextEdit = %DisplayNameTextEdit
+@onready var port_text_edit: TextEdit = %PortTextEdit
+@onready var host_button: Button = %HostButton
+@onready var ip_address_text_edit: TextEdit = %IPAddressTextEdit
+@onready var join_button: Button = %JoinButton
+@onready var back_button: Button = %BackButton
 @onready var main_menu_scene: PackedScene = load("uid://bybk7oysngwbb")
 
 
