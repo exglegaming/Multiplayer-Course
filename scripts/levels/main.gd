@@ -72,7 +72,7 @@ func respawn_dead_peers() -> void:
 
 
 func end_game() -> void:
-	multiplayer.multiplayer_peer = null
+	multiplayer.multiplayer_peer = OfflineMultiplayerPeer.new()
 	get_tree().change_scene_to_file(MAIN_MENU_SCENE)
 
 
