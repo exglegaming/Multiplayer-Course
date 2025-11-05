@@ -10,6 +10,7 @@ static var background_mask: Sprite2D
 var player_scene: PackedScene = preload("uid://bvlv7g7jv37sh")
 var dead_peers: Array[int] = []
 var player_dictionary: Dictionary[int, Player]= {}
+var player_name_dictionary: Dictionary[int, String] = {}
 
 @onready var multiplayer_spawner: MultiplayerSpawner = $MultiplayerSpawner
 @onready var player_spawn_position: Marker2D = $PayerSpawnPosition
@@ -24,6 +25,7 @@ func _ready() -> void:
 
 	multiplayer_spawner.spawn_function = func(data: Variant) -> Variant:
 		var player := player_scene.instantiate() as Player
+		player.set_display_name(data.display_name)
 		player.name = str(data.peer_id)
 		player.input_multiplayer_authority = data.peer_id
 		player.global_position = player_spawn_position.global_position
@@ -35,7 +37,7 @@ func _ready() -> void:
 
 		return player
 
-	peer_ready.rpc_id(1)
+	peer_ready.rpc_id(1, MultiplayerConfig.display_name)
 	
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
 
@@ -46,9 +48,14 @@ func _ready() -> void:
 
 
 @rpc("any_peer", "call_local", "reliable")
-func peer_ready() -> void:
+func peer_ready(display_name: String) -> void:
 	var sender_id := multiplayer.get_remote_sender_id()
-	multiplayer_spawner.spawn({"peer_id": sender_id})
+	player_name_dictionary[sender_id] = display_name
+	multiplayer_spawner.spawn({
+		"peer_id": sender_id, 
+		"display_name": player_name_dictionary[sender_id]
+		})
+	
 	enemy_manager.sychronize(sender_id)
 
 
@@ -57,7 +64,10 @@ func respawn_dead_peers() -> void:
 	for peer_id in dead_peers:
 		if !all_peers.has(peer_id):
 			continue
-		multiplayer_spawner.spawn({"peer_id": peer_id})
+		multiplayer_spawner.spawn({
+			"peer_id": peer_id,
+			"display_name": player_name_dictionary[peer_id]
+			})
 	dead_peers.clear()
 
 

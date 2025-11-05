@@ -10,6 +10,7 @@ var input_multiplayer_authority: int
 var bullet_scene: PackedScene = preload("uid://c7aiae8nm0c3v")
 var muzzle_flash_scene: PackedScene = preload("uid://dw382p5mwq3kl")
 var is_dying: bool
+var display_name: String
 
 @onready var player_input_synchronizer_component: PlayerInputSynchronizerComponent = $PlayerInputSynchronizerComponent
 @onready var weapon_root: Node2D = $Visuals/WeaponRoot
@@ -18,9 +19,12 @@ var is_dying: bool
 @onready var visuals: Node2D = $Visuals
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 @onready var barrel_position: Marker2D = %BarrelPosition
+@onready var display_name_label: Label = $DisplayNameLabel
+
 
 func _ready() -> void:
 	player_input_synchronizer_component.set_multiplayer_authority(input_multiplayer_authority)
+	display_name_label.text = display_name
 
 	if is_multiplayer_authority():
 		health_component.died.connect(_on_died)
@@ -32,11 +36,15 @@ func _process(_delta: float) -> void:
 		if is_dying:
 			global_position = Vector2.RIGHT * 1000
 			return
-		
+
 		velocity = player_input_synchronizer_component.movement_vector * 100
 		move_and_slide()
 		if player_input_synchronizer_component.is_attack_pressed:
 			try_fire()
+
+
+func set_display_name(incoming_name: String) -> void:
+	display_name = incoming_name
 
 
 func update_aim_position() -> void:
@@ -78,7 +86,7 @@ func kill() -> void:
 	if !is_multiplayer_authority():
 		push_error("Cannot call kill on non-server client")
 		return
-	
+
 	_kill.rpc()
 	await get_tree().create_timer(.5).timeout
 
