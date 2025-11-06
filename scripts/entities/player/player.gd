@@ -10,6 +10,7 @@ var input_multiplayer_authority: int
 var bullet_scene: PackedScene = preload("uid://c7aiae8nm0c3v")
 var muzzle_flash_scene: PackedScene = preload("uid://dw382p5mwq3kl")
 var is_dying: bool
+var is_respawn: bool
 var display_name: String
 
 @onready var player_input_synchronizer_component: PlayerInputSynchronizerComponent = $PlayerInputSynchronizerComponent
@@ -25,12 +26,14 @@ var display_name: String
 func _ready() -> void:
 	player_input_synchronizer_component.set_multiplayer_authority(input_multiplayer_authority)
 
-	if multiplayer.multiplayer_peer is OfflineMultiplayerPeer:
+	if multiplayer.multiplayer_peer is OfflineMultiplayerPeer || player_input_synchronizer_component.is_multiplayer_authority():
 		display_name_label.visible = false
 	else:
 		display_name_label.text = display_name
 
 	if is_multiplayer_authority():
+		if is_respawn:
+			health_component.current_health = 1
 		health_component.died.connect(_on_died)
 
 

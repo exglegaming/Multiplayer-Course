@@ -1,3 +1,4 @@
+class_name GameUI
 extends CanvasLayer
 
 
@@ -5,6 +6,8 @@ extends CanvasLayer
 
 @onready var timer_label: Label = %TimerLabel
 @onready var round_label: Label = %RoundLabel
+@onready var health_progress_bar: ProgressBar = %HealthProgressBar
+@onready var display_name_label: Label = %DisplayNameLabel
 
 
 func _ready() -> void:
@@ -15,5 +18,17 @@ func _process(_delta: float) -> void:
     timer_label.text = str(ceili(enemy_manager.get_round_time_remaining()))
 
 
+func connect_player(player: Player) -> void:
+    (func() -> void:
+        display_name_label.text = player.display_name
+        player.health_component.health_changed.connect(_on_health_changed)
+        _on_health_changed(player.health_component.current_health, player.health_component.max_health)
+    ).call_deferred()
+
+
 func _on_round_began(round_count: int) -> void:
     round_label.text = "Round %s" % round_count
+
+
+func _on_health_changed(current_health: int, max_health: int) -> void:
+    health_progress_bar.value = float(current_health) / max_health if max_health != 0 else 0
