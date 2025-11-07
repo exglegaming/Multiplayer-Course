@@ -18,6 +18,7 @@ var player_name_dictionary: Dictionary[int, String] = {}
 @onready var _background_effects: Node2D = $BackgroundEffects
 @onready var _background_mask: Sprite2D = %BackgroundMask
 @onready var game_ui: GameUI = $GameUI
+@onready var pause_menu: PauseMenu = $PauseMenu
 
 
 func _ready() -> void:
@@ -45,6 +46,7 @@ func _ready() -> void:
 
 	peer_ready.rpc_id(1, MultiplayerConfig.display_name)
 	
+	pause_menu.quit_requested.connect(_on_quit_requested)
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
 
 	if is_multiplayer_authority():
@@ -80,6 +82,7 @@ func respawn_dead_peers() -> void:
 
 
 func end_game() -> void:
+	get_tree().paused = false
 	multiplayer.multiplayer_peer = OfflineMultiplayerPeer.new()
 	get_tree().change_scene_to_file(MAIN_MENU_SCENE)
 
@@ -125,4 +128,8 @@ func _on_peer_disconnected(peer_id: int) -> void:
 
 
 func _on_game_completed() -> void:
+	end_game()
+
+
+func _on_quit_requested() -> void:
 	end_game()
