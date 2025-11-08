@@ -28,8 +28,9 @@ spawn_rect = NodePath("../SpawnRect")
 _spawnable_scenes = PackedStringArray("uid://c7aiae8nm0c3v", "uid://iysf2ptaqiy8")
 spawn_path = NodePath("../YSortRoot")
 
-[node name="GameUI" parent="." node_paths=PackedStringArray("enemy_manager") instance=ExtResource("3_j4d2a")]
+[node name="GameUI" parent="." node_paths=PackedStringArray("enemy_manager", "lobby_manager") instance=ExtResource("3_j4d2a")]
 enemy_manager = NodePath("../EnemyManager")
+lobby_manager = NodePath("../LobbyManager")
 
 [node name="PauseMenu" parent="." instance=ExtResource("4_ubwgw")]
 visible = false
