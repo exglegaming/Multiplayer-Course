@@ -30,6 +30,7 @@ theme_override_constants/separation = 0
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.09019608, 0.7294118, 0.49019608, 1)
+theme_override_constants/outline_size = 4
 text = "READY"
 horizontal_alignment = 1
 
@@ -37,18 +38,20 @@ horizontal_alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/line_spacing = 0
-text = "NOT READY
-PRESS R TO READY UP"
+theme_override_constants/outline_size = 4
+text = "PRESS R TO READY UP"
 horizontal_alignment = 1
 
 [node name="ReadyCountLabel" type="Label" parent="MarginContainer/ReadyUpContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_constants/outline_size = 4
 text = "1/4 READY"
 horizontal_alignment = 1
 
 [node name="RoundInfoContainer" type="VBoxContainer" parent="MarginContainer"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 0
@@ -60,6 +63,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 0
+theme_override_constants/outline_size = 4
 text = "Round 1"
 
 [node name="TimerLabel" type="Label" parent="MarginContainer/RoundInfoContainer"]
@@ -67,6 +71,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 0
+theme_override_constants/outline_size = 4
 text = "30"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
@@ -101,6 +106,7 @@ theme_override_constants/separation = 0
 [node name="DisplayNameLabel" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_constants/outline_size = 4
 text = "Player Name"
 
 [node name="HealthProgressBar" type="ProgressBar" parent="MarginContainer/HBoxContainer/VBoxContainer"]
