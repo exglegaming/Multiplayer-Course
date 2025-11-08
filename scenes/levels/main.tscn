@@ -1,10 +1,11 @@
-[gd_scene load_steps=11 format=3 uid="uid://25v5neekcjpn"]
+[gd_scene load_steps=12 format=3 uid="uid://25v5neekcjpn"]
 
 [ext_resource type="Script" uid="uid://dcxxgns8fnshc" path="res://scripts/levels/main.gd" id="1_72ix8"]
 [ext_resource type="Texture2D" uid="uid://cwdw6krv0ouug" path="res://assets/environment/arena.png" id="2_2vj2h"]
 [ext_resource type="PackedScene" uid="uid://dwwkl7bso0srk" path="res://scenes/manager/enemy_manager.tscn" id="2_y0acb"]
 [ext_resource type="PackedScene" uid="uid://by55842vg2bcw" path="res://scenes/ui/game_ui/game_ui.tscn" id="3_j4d2a"]
 [ext_resource type="PackedScene" uid="uid://b6jo68dwrdjkw" path="res://scenes/manager/lobby_manager.tscn" id="3_vkq25"]
+[ext_resource type="PackedScene" uid="uid://baxfnxbpu84e7" path="res://scenes/manager/upgrade_manager.tscn" id="4_7lrji"]
 [ext_resource type="PackedScene" uid="uid://d3p0giu0f48ya" path="res://scenes/camera/game_camera.tscn" id="4_b6bv0"]
 [ext_resource type="PackedScene" uid="uid://dls5e3m65wwpx" path="res://scenes/ui/pause_menu/pause_menu.tscn" id="4_ubwgw"]
 [ext_resource type="Texture2D" uid="uid://cp83w5uyg65f" path="res://assets/effect/clip_mask.png" id="5_u81e1"]
@@ -24,6 +25,11 @@ spawn_rect = NodePath("../SpawnRect")
 
 [node name="LobbyManager" parent="." instance=ExtResource("3_vkq25")]
 
+[node name="UpgradeManager" parent="." node_paths=PackedStringArray("enemy_manager", "spawn_position", "spawn_root") instance=ExtResource("4_7lrji")]
+enemy_manager = NodePath("../EnemyManager")
+spawn_position = NodePath("../CenterPosition")
+spawn_root = NodePath("../YSortRoot")
+
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
 _spawnable_scenes = PackedStringArray("uid://c7aiae8nm0c3v", "uid://iysf2ptaqiy8")
 spawn_path = NodePath("../YSortRoot")
@@ -39,7 +45,7 @@ visible = false
 position = Vector2(320, 180)
 metadata/_edit_lock_ = true
 
-[node name="PayerSpawnPosition" type="Marker2D" parent="."]
+[node name="CenterPosition" type="Marker2D" parent="."]
 position = Vector2(320, 185)
 metadata/_edit_lock_ = true
 
