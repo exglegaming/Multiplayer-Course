@@ -12,6 +12,7 @@ const BASE_BULLET_DAMAGE: int = 1
 var input_multiplayer_authority: int
 var bullet_scene: PackedScene = preload("uid://c7aiae8nm0c3v")
 var muzzle_flash_scene: PackedScene = preload("uid://dw382p5mwq3kl")
+var ground_particles_scene: PackedScene = preload("uid://b681vbq636rv5")
 var is_dying: bool
 var is_respawn: bool
 var display_name: String
@@ -97,7 +98,19 @@ func get_bullet_damage() -> int:
 
 
 @rpc("authority", "call_local")
-func start_invulnerability() -> void:
+func play_hit_effects() -> void:
+	if player_input_synchronizer_component.is_multiplayer_authority():
+		GameCamera.shake(1)
+
+	var hit_particles: Node2D = ground_particles_scene.instantiate()
+
+	var background_node: Node = Main.background_mask
+	if !is_instance_valid(background_node):
+		background_node = get_parent()
+
+	background_node.add_child(hit_particles)
+	hit_particles.global_position = global_position
+
 	hurtbox_component.disable_collisions = true
 	var tween: Tween = create_tween()
 	tween.set_loops(10)
@@ -175,4 +188,4 @@ func _on_died() -> void:
 
 
 func _on_hit_by_hitbox() -> void:
-	start_invulnerability.rpc()
+	play_hit_effects.rpc()
