@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://bvlv7g7jv37sh"]
+[gd_scene load_steps=14 format=3 uid="uid://bvlv7g7jv37sh"]
 
 [ext_resource type="Script" uid="uid://bok830xl5fxm5" path="res://scripts/entities/player/player.gd" id="1_1hmtu"]
 [ext_resource type="PackedScene" uid="uid://dq47mgf21fmdy" path="res://scenes/components/player_input_synchronizer_component.tscn" id="2_635qg"]
@@ -77,6 +77,9 @@ properties/1/path = NodePath("HealthComponent:current_health")
 properties/1/spawn = true
 properties/1/replication_mode = 2
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_bj7e2"]
+radius = 16.0
+
 [sub_resource type="CircleShape2D" id="CircleShape2D_8akj5"]
 radius = 5.0
 
@@ -104,6 +107,15 @@ max_health = 5
 [node name="FireRateTimer" type="Timer" parent="."]
 wait_time = 0.25
 one_shot = true
+
+[node name="ActivationArea" type="Area2D" parent="."]
+position = Vector2(0, -9)
+collision_layer = 8
+collision_mask = 0
+
+[node name="ActivationAreaCollisionShape" type="CollisionShape2D" parent="ActivationArea"]
+unique_name_in_owner = true
+shape = SubResource("CircleShape2D_bj7e2")
 
 [node name="Visuals" type="Node2D" parent="."]
 

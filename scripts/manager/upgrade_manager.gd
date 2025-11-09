@@ -80,8 +80,8 @@ func generate_upgrade_options() -> void:
 
 func create_upgrade_option_nodes(upgrade_resources: Array[UpgradeResource]) -> Array[UpgradeOption]:
 	var result: Array[UpgradeOption] = []
-	var initial_x: int = -64
-	var x_difference: int = 64
+	var initial_x: int = -96
+	var x_difference: int = 96
 
 	for i in range(upgrade_resources.size()):
 		var upgrade_option: UpgradeOption = upgrade_option_scene.instantiate()

@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://c5crefykwsii7"]
+[gd_scene load_steps=15 format=3 uid="uid://c5crefykwsii7"]
 
 [ext_resource type="Script" uid="uid://cnlm1fod18pw" path="res://scripts/entities/upgrade_option/upgrade_option.gd" id="1_2nlm7"]
 [ext_resource type="PackedScene" uid="uid://b8iefmglebpj2" path="res://scenes/components/hurtbox_component.tscn" id="1_escxf"]
@@ -147,6 +147,9 @@ _data = {
 [sub_resource type="CircleShape2D" id="CircleShape2D_q6tin"]
 radius = 8.0
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_gkiwt"]
+radius = 32.0
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ocfif"]
 resource_local_to_scene = true
 shader = ExtResource("6_gkiwt")
@@ -171,8 +174,49 @@ health_component = NodePath("../HealthComponent")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HurtboxComponent"]
 shape = SubResource("CircleShape2D_q6tin")
 
+[node name="PlayerDetectionArea" type="Area2D" parent="."]
+position = Vector2(0, -16)
+collision_layer = 0
+collision_mask = 8
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerDetectionArea"]
+shape = SubResource("CircleShape2D_gkiwt")
+
 [node name="HitFlashSpriteComponent" parent="." node_paths=PackedStringArray("health_component") instance=ExtResource("5_gkiwt")]
 material = SubResource("ShaderMaterial_ocfif")
 position = Vector2(0, -16)
 texture = ExtResource("3_ovbw4")
 health_component = NodePath("../HealthComponent")
+
+[node name="InfoContainer" type="VBoxContainer" parent="."]
+custom_minimum_size = Vector2(192, 0)
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -96.0
+offset_top = -80.0
+offset_right = 96.0
+offset_bottom = -40.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_constants/separation = 0
+
+[node name="TitleLabel" type="Label" parent="InfoContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.83137256, 0.17254902, 0.30980393, 1)
+theme_override_constants/outline_size = 4
+text = "Example Title"
+horizontal_alignment = 1
+
+[node name="DescriptionLabel" type="Label" parent="InfoContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(192, 0)
+layout_mode = 2
+theme_override_constants/outline_size = 4
+text = "Example Description"
+horizontal_alignment = 1
+autowrap_mode = 2
