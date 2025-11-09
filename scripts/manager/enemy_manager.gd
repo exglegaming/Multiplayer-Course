@@ -15,6 +15,7 @@ const MAX_ROUNDS: int = 10
 @export var enemy_scene: PackedScene
 @export var enemy_spawn_root: Node
 @export var spawn_rect: ReferenceRect
+@export var upgrade_manager: UpgradeManager
 
 var _round_count: int = 0
 var round_count: int: 
@@ -34,6 +35,7 @@ func _ready() -> void:
 	spawn_interval_timer.timeout.connect(_on_spawn_interval_timer_timeout)
 	round_timer.timeout.connect(_on_round_timer_timeout)
 	GameEvents.enemy_died.connect(_on_enemy_died)
+	upgrade_manager.upgrades_completed.connect(_on_uprgades_completed)
 
 
 func start() -> void:
@@ -74,7 +76,7 @@ func get_round_time_remaining() -> float:
 
 func begin_round() -> void:
 	round_count += 1
-	round_timer.wait_time = 1 # ROUND_BASE_TIME + ((round_count - 1) * ROUND_GROWTH)
+	round_timer.wait_time = ROUND_BASE_TIME + ((round_count - 1) * ROUND_GROWTH)
 	round_timer.start()
 
 	spawn_interval_timer.wait_time = BASE_ENEMY_SPWAN_TIME + ((round_count - 1) * ENEMY_SPWAN_TIME_GROWTH)
@@ -127,3 +129,7 @@ func _on_round_timer_timeout() -> void:
 func _on_enemy_died() -> void:
 	spawned_enemies -= 1
 	check_round_completed()
+
+
+func _on_uprgades_completed() -> void:
+	begin_round()

@@ -2,6 +2,8 @@ class_name UpgradeManager
 extends Node
 
 
+signal upgrades_completed
+
 static var instance: UpgradeManager
 
 @export var enemy_manager: EnemyManager
@@ -12,6 +14,7 @@ static var instance: UpgradeManager
 var upgrade_option_scene: PackedScene = preload("uid://c5crefykwsii7")
 var peer_id_to_upgrade_opotions: Dictionary[int, Array] = {}
 var peer_id_to_upgrades_acquired: Dictionary[int, Dictionary] = {}
+var outstanding_peers_to_upgrade: Array[int] = []
 
 
 static func get_peer_upgrade_count(peer_id: int, upgrade_id: String) -> int:
@@ -35,6 +38,9 @@ func _ready() -> void:
 	instance = self
 	enemy_manager.round_completed.connect(_on_round_completed)
 
+	if is_multiplayer_authority():
+		multiplayer.peer_disconnected.connect(_on_peer_disconnected)
+
 
 func generate_upgrade_options() -> void:
 	peer_id_to_upgrade_opotions.clear()
@@ -42,6 +48,8 @@ func generate_upgrade_options() -> void:
 	var connected_peer_ids: PackedInt32Array = multiplayer.get_peers()
 	connected_peer_ids.append(MultiplayerPeer.TARGET_PEER_SERVER)
 	for connected_peer_id in connected_peer_ids:
+		outstanding_peers_to_upgrade.append(connected_peer_id)
+
 		var available_upgrades_copy: Array = Array(available_upgrades)
 		available_upgrades_copy.shuffle()
 
@@ -104,10 +112,14 @@ func handle_upgrade_selected(upgrade_index: int, for_peer_id: int) -> void:
 
 	upgrade_dictionary[chosen_upgrade.id] = upgrade_count + 1
 
+	outstanding_peers_to_upgrade.erase(for_peer_id)
+
 	print("Peer %s has selected upgrade with id %s" % [
 		for_peer_id,
 		peer_id_to_upgrade_opotions[for_peer_id][upgrade_index].id
 	])
+
+	check_upgrades_complete()
 
 
 @rpc("authority", "call_local", "reliable")
@@ -124,9 +136,21 @@ func set_upgrade_options(selected_upgrades: Array) -> void:
 		created_nodes[i].name = selected_upgrades[i].name
 
 
+func check_upgrades_complete() -> void:
+	if outstanding_peers_to_upgrade.size() > 0:
+		return
+
+	upgrades_completed.emit()
+
+
 func _on_round_completed() -> void:
 	generate_upgrade_options()
 
 
 func _on_upgrade_option_selected(upgrade_index: int, for_peer_id: int) -> void:
 	handle_upgrade_selected(upgrade_index, for_peer_id)
+
+func _on_peer_disconnected(peer_id: int) -> void:
+	if outstanding_peers_to_upgrade.has(peer_id):
+		outstanding_peers_to_upgrade.erase(peer_id)
+		check_upgrades_complete()
