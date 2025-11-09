@@ -20,34 +20,38 @@ func generate_upgrade_options() -> void:
 	var connected_peer_ids: PackedInt32Array = multiplayer.get_peers()
 	connected_peer_ids.append(MultiplayerPeer.TARGET_PEER_SERVER)
 	for connected_peer_id in connected_peer_ids:
-		var selected_upgrades: Array = [
-			available_upgrades[0].id, 
-			available_upgrades[0].id, 
-			available_upgrades[0].id
-		]
-
 		peer_id_to_upgrade_opotions[connected_peer_id] = [
-			available_upgrades[0], 
-			available_upgrades[0], 
+			available_upgrades[0],
+			available_upgrades[0],
 			available_upgrades[0]
 		]
-		
+
 		var upgrade_resources: Array[UpgradeResource] = [
-			available_upgrades[0], 
-			available_upgrades[0], 
+			available_upgrades[0],
+			available_upgrades[0],
 			available_upgrades[0]
 		]
 
 		var upgrade_options: Array[UpgradeOption] = create_upgrade_option_nodes(upgrade_resources)
-		var upgrade_names: Array = []
-		for upgrade_option in upgrade_options:
+		var selected_upgrades: Array = []
+
+		for i in upgrade_options.size():
+			var upgrade_option: UpgradeOption = upgrade_options[i]
+			var upgrade_resource: UpgradeResource = upgrade_resources[i]
 			upgrade_option.set_peer_id_filter(connected_peer_id)
 			var uid: int = ResourceUID.create_id()
 			upgrade_option.name = str(uid)
-			upgrade_names.append(upgrade_option.name)
+
+
+			selected_upgrades.append({
+				"name": upgrade_option.name,
+				"id": upgrade_resource.id
+			})
+
+			upgrade_option.visible = connected_peer_id == MultiplayerPeer.TARGET_PEER_SERVER
 
 		if connected_peer_id != MultiplayerPeer.TARGET_PEER_SERVER:
-			set_upgrade_options.rpc_id(connected_peer_id, selected_upgrades, upgrade_names)
+			set_upgrade_options.rpc_id(connected_peer_id, selected_upgrades)
 
 
 func create_upgrade_option_nodes(upgrade_resources: Array[UpgradeResource]) -> Array[UpgradeOption]:
@@ -73,23 +77,23 @@ func create_upgrade_option_nodes(upgrade_resources: Array[UpgradeResource]) -> A
 
 func handle_upgrade_selected(upgrade_index: int, for_peer_id: int) -> void:
 	print("Peer %s has selected upgrade with id %s" % [
-		for_peer_id, 
+		for_peer_id,
 		peer_id_to_upgrade_opotions[for_peer_id][upgrade_index].id
 	])
 
 
 @rpc("authority", "call_local", "reliable")
-func set_upgrade_options(upgrades_ids: Array, upgrade_names: Array) -> void:
+func set_upgrade_options(selected_upgrades: Array) -> void:
 	var upgrade_resources: Array[UpgradeResource] = []
-	for upgrade_id: String in upgrades_ids:
+	for upgrade: Variant in selected_upgrades:
 		var resource_index: int = available_upgrades.find_custom(func (item: UpgradeResource) -> bool:
-			return item.id == upgrade_id
+			return item.id == upgrade.id
 		)
 		upgrade_resources.append(available_upgrades[resource_index])
 
 	var created_nodes: Array[UpgradeOption] = create_upgrade_option_nodes(upgrade_resources)
 	for i in created_nodes.size():
-		created_nodes[i].name = upgrade_names[i]
+		created_nodes[i].name = selected_upgrades[i].name
 
 
 func _on_round_completed() -> void:
