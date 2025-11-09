@@ -6,6 +6,8 @@ signal hit_by_hitbox
 
 @export var health_component: HealthComponent
 
+var peer_id_filter: int = -1
+
 
 func _ready() -> void:
 	area_entered.connect(_on_area_entered)
@@ -21,4 +23,8 @@ func _on_area_entered(other_area: Area2D) -> void:
 	if !is_multiplayer_authority() || other_area is not HitboxComponent:
 		return
 	
+	var hitbox_component: HitboxComponent = other_area
+	if peer_id_filter > -1 && hitbox_component.source_peer_id != peer_id_filter:
+		return
+
 	_handle_hit.call_deferred(other_area)

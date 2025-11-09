@@ -74,7 +74,7 @@ func get_round_time_remaining() -> float:
 
 func begin_round() -> void:
 	round_count += 1
-	round_timer.wait_time = ROUND_BASE_TIME + ((round_count - 1) * ROUND_GROWTH)
+	round_timer.wait_time = 1 # ROUND_BASE_TIME + ((round_count - 1) * ROUND_GROWTH)
 	round_timer.start()
 
 	spawn_interval_timer.wait_time = BASE_ENEMY_SPWAN_TIME + ((round_count - 1) * ENEMY_SPWAN_TIME_GROWTH)
