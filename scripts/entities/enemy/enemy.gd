@@ -24,12 +24,13 @@ var current_state: String:
 @onready var hitbox_collision_shape: CollisionShape2D = %HitboxCollisionShape
 @onready var alert_sprite: Sprite2D = $AlertSprite
 @onready var hurtbox_component: HurtboxComponent = $HurtboxComponent
+@onready var animation_player: AnimationPlayer = $AnimationPlayer
 
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_SCENE_INSTANTIATED:
 		state_machine.add_states(state_spawn, enter_state_spawn, Callable())
-		state_machine.add_states(state_normal, enter_state_normal, Callable())
+		state_machine.add_states(state_normal, enter_state_normal, leave_state_normal)
 		state_machine.add_states(state_charge_attack, enter_state_charge_attack, leave_state_charge_attack)
 		state_machine.add_states(state_attack, enter_state_attack, leave_state_attack)
 	
@@ -69,6 +70,7 @@ func state_spawn() -> void:
 
 
 func enter_state_normal() -> void:
+	animation_player.play("run")
 	if is_multiplayer_authority():
 		acquire_target()
 		target_acquisistion_timer.start()
@@ -86,6 +88,10 @@ func state_normal() -> void:
 			state_machine.change_state(state_charge_attack)
 
 	flip()
+
+
+func leave_state_normal() -> void:
+	animation_player.play("RESET")
 
 
 func enter_state_charge_attack() -> void:
