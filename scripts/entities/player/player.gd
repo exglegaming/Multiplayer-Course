@@ -26,6 +26,7 @@ var display_name: String
 @onready var display_name_label: Label = $DisplayNameLabel
 @onready var activation_area_collision_shape: CollisionShape2D = %ActivationAreaCollisionShape
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
+@onready var hurtbox_component: HurtboxComponent = $HurtboxComponent
 
 
 func _ready() -> void:
@@ -41,6 +42,7 @@ func _ready() -> void:
 		if is_respawn:
 			health_component.current_health = 1
 		health_component.died.connect(_on_died)
+		hurtbox_component.hit_by_hitbox.connect(_on_hit_by_hitbox)
 
 
 func _process(delta: float) -> void:
@@ -92,6 +94,19 @@ func get_bullet_damage() -> int:
 	)
 
 	return BASE_BULLET_DAMAGE + damage_count
+
+
+@rpc("authority", "call_local")
+func start_invulnerability() -> void:
+	hurtbox_component.disable_collisions = true
+	var tween: Tween = create_tween()
+	tween.set_loops(10)
+	tween.tween_property(visuals, "visible", false, .05)
+	tween.tween_property(visuals, "visible", true, .05)
+
+	tween.finished.connect(func () -> void:
+		hurtbox_component.disable_collisions = false
+	)
 
 
 func set_display_name(incoming_name: String) -> void:
@@ -157,3 +172,7 @@ func _kill() -> void:
 
 func _on_died() -> void:
 	kill()
+
+
+func _on_hit_by_hitbox() -> void:
+	start_invulnerability.rpc()
