@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3 uid="uid://fejsdcfhn46u"]
+
+[ext_resource type="Script" uid="uid://b2vhledvnhw1u" path="res://scripts/autoload/cursor.gd" id="1_2ppn7"]
+[ext_resource type="Texture2D" uid="uid://dc1gjkeqsxnoj" path="res://assets/ui/crosshair.png" id="1_t38wg"]
+
+[node name="Cursor" type="CanvasLayer"]
+process_mode = 3
+layer = 100
+script = ExtResource("1_2ppn7")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_t38wg")
