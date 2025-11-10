@@ -28,6 +28,8 @@ var display_name: String
 @onready var activation_area_collision_shape: CollisionShape2D = %ActivationAreaCollisionShape
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 @onready var hurtbox_component: HurtboxComponent = $HurtboxComponent
+@onready var weapon_stream_player: AudioStreamPlayer = $WeaponStreamPlayer
+@onready var hit_stream_player: AudioStreamPlayer = $HitStreamPlayer
 
 
 func _ready() -> void:
@@ -101,6 +103,7 @@ func get_bullet_damage() -> int:
 func play_hit_effects() -> void:
 	if player_input_synchronizer_component.is_multiplayer_authority():
 		GameCamera.shake(1)
+		hit_stream_player.play()
 
 	var hit_particles: Node2D = ground_particles_scene.instantiate()
 
@@ -163,6 +166,8 @@ func play_fire_effects() -> void:
 
 	if player_input_synchronizer_component.is_multiplayer_authority():
 		GameCamera.shake(1.0)
+	
+	weapon_stream_player.play()
 
 
 func kill() -> void:

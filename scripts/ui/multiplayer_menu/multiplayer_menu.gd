@@ -25,6 +25,13 @@ func _ready() -> void:
 	host_button.pressed.connect(_on_host_pressed)
 	join_button.pressed.connect(_on_join_pressed)
 
+	UIAudioManager.register_buttons([
+		back_button,
+		host_button,
+		join_button,
+		error_confirm_button
+	])
+
 	display_name_text_edit.text_changed.connect(_on_text_changed)
 	ip_address_text_edit.text_changed.connect(_on_text_changed)
 	port_text_edit.text_changed.connect(_on_text_changed)

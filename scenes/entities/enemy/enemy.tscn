@@ -1,13 +1,17 @@
-[gd_scene load_steps=17 format=3 uid="uid://iysf2ptaqiy8"]
+[gd_scene load_steps=22 format=3 uid="uid://iysf2ptaqiy8"]
 
 [ext_resource type="Script" uid="uid://d3o8hyvqdaexs" path="res://scripts/entities/enemy/enemy.gd" id="1_e58rf"]
 [ext_resource type="Texture2D" uid="uid://bug5bbrsnns8" path="res://assets/enemy/enemy_medium.png" id="1_j1w5s"]
 [ext_resource type="PackedScene" uid="uid://drpnxy0o1td60" path="res://scenes/components/health_component.tscn" id="2_6fawb"]
+[ext_resource type="AudioStream" uid="uid://24dxrpgwhfxj" path="res://assets/audio/hit_1.wav" id="3_frkcr"]
 [ext_resource type="PackedScene" uid="uid://b8iefmglebpj2" path="res://scenes/components/hurtbox_component.tscn" id="3_in88q"]
 [ext_resource type="Texture2D" uid="uid://w6fe58xbyws5" path="res://assets/enemy/attack_alert.png" id="4_0wdte"]
+[ext_resource type="AudioStream" uid="uid://bb3lhvbf1w2v4" path="res://assets/audio/hit_2.wav" id="4_h0e4h"]
 [ext_resource type="PackedScene" uid="uid://b85mtx0pkq5an" path="res://scenes/components/hit_flash_sprite_component.tscn" id="5_7gxlw"]
 [ext_resource type="PackedScene" uid="uid://d3t0tbkljitvk" path="res://scenes/components/hitbox_component.tscn" id="5_dxsuy"]
+[ext_resource type="AudioStream" uid="uid://cunrrw81rjhdr" path="res://assets/audio/hit_3.wav" id="5_jkr0c"]
 [ext_resource type="Shader" uid="uid://dgloi6hn3frpr" path="res://resources/shader/hit_flash.gdshader" id="6_ilesx"]
+[ext_resource type="AudioStream" uid="uid://ckvh1bl5y80fj" path="res://assets/audio/hit_4.wav" id="6_sbss2"]
 
 [sub_resource type="Animation" id="Animation_ddkys"]
 length = 0.001
@@ -59,6 +63,15 @@ properties/2/path = NodePath(".:current_state")
 properties/2/spawn = true
 properties/2/replication_mode = 2
 
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_ilesx"]
+random_pitch = 1.1
+random_volume_offset_db = 2.0
+streams_count = 4
+stream_0/stream = ExtResource("3_frkcr")
+stream_1/stream = ExtResource("4_h0e4h")
+stream_2/stream = ExtResource("5_jkr0c")
+stream_3/stream = ExtResource("6_sbss2")
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_in88q"]
 size = Vector2(16, 24)
 
@@ -102,6 +115,12 @@ one_shot = true
 
 [node name="HealthComponent" parent="." instance=ExtResource("2_6fawb")]
 max_health = 2
+
+[node name="HitStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = SubResource("AudioStreamRandomizer_ilesx")
+volume_db = -2.0
+max_polyphony = 3
+bus = &"sfx"
 
 [node name="HurtboxComponent" parent="." node_paths=PackedStringArray("health_component") instance=ExtResource("3_in88q")]
 position = Vector2(0, -12)
