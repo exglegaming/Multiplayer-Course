@@ -5,17 +5,21 @@ extends CanvasLayer
 signal quit_requested
 
 var current_paused_peer: int = -1
+var options_menu_scene: PackedScene = preload("uid://dniyftgku31me")
 
 @onready var resume_button: Button = %ResumeButton
+@onready var options_button: Button = %OptionsButton
 @onready var quit_button: Button = %QuitButton
 
 
 func _ready() -> void:
 	resume_button.pressed.connect(_on_resume_pressed)
+	options_button.pressed.connect(_on_options_pressed)
 	quit_button.pressed.connect(_on_quit_pressed)
 
 	UIAudioManager.register_buttons([
 		resume_button,
+		options_button,
 		quit_button
 	])
 
@@ -52,7 +56,10 @@ func pause(paused_peer: int) -> void:
 	get_tree().paused = true
 	visible = true
 	current_paused_peer = paused_peer
-	resume_button.disabled = current_paused_peer != multiplayer.get_unique_id()
+
+	var is_controlling_player: bool = current_paused_peer == multiplayer.get_unique_id()
+	resume_button.disabled = !is_controlling_player
+	options_button.disabled = !is_controlling_player
 
 
 @rpc("authority", "call_local", "reliable")
@@ -64,6 +71,11 @@ func unpause() -> void:
 
 func _on_resume_pressed() -> void:
 	request_unpause.rpc_id(MultiplayerPeer.TARGET_PEER_SERVER)
+
+
+func _on_options_pressed() -> void:
+	var options_menu: Node = options_menu_scene.instantiate()
+	add_child(options_menu)
 
 
 func _on_quit_pressed() -> void:
